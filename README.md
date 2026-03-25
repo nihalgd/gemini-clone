@@ -76,12 +76,6 @@ VITE_GEMINI_API_KEY=your_api_key_here
 
 ---
 
-## 📸 Screenshots
-
-(Add screenshots of your UI here)
-
----
-
 ## 🤝 Contributing
 
 Feel free to fork this repo and contribute improvements!
