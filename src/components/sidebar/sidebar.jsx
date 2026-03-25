@@ -9,7 +9,7 @@ const Sidebar = () => {
 
   return (
     <div>
-        <div className="sidebar">
+        <div className="sidebar h-screen">
             <div className="top">
 
                 <img onClick={()=>setextended(prev=>!prev)} className="menu" src={assets.menu_icon} alt=""/>

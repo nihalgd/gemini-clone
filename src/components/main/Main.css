@@ -69,6 +69,48 @@
     font-size: 17px;
 }
 
-.main .card :hover{
+.card:hover{
     background-color: #dfe4ea;
+}
+.main-bottom{
+    width: 100%;
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+}
+
+.search-box{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    background-color: #f0f4f9;
+    padding: 10px 20px;
+    border-radius: 50px;
+}
+
+.search-box input{
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 18px;
+}
+
+.search-box div{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.search-box img{
+    width: 24px;
+    cursor: pointer;
+}
+
+.bottom-info{
+    text-align: center;
+    font-size: 12px;
+    margin: 15px auto;
+    font-weight: 300;
 }

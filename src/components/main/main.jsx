@@ -1,9 +1,25 @@
+import { useState } from "react";
+import { sendPrompt } from "../../config/gemini";
 import { assets } from "../../assets/assets";
 import './Main.css'
 
-const main = () => {
+const Main = () => {
+
+  const [input, setInput] = useState("");
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const handleSend = async () => {
+  if (!input) return;
+
+  setLoading(true);
+  const res = await sendPrompt(input);
+  setResponse(res);
+  setLoading(false);
+};
+
   return (
-    <div className='main'>
+    <div className='main h-screen'>
       <div className="nav">
         <p>Gemini</p>
         <img src={assets.user_icon} alt="" />
@@ -11,9 +27,14 @@ const main = () => {
 
       <div className="main-container">
         <div className="greet">
-          <p><span>Hello, Nihal.</span></p>
+          <p><span>Hello, Chikki.</span></p>
           <p>How can i help you today</p>
         </div>
+
+        <div className="result">
+          {loading ? <p>Thinking...</p> : <p>{response}</p>}
+        </div>
+        
         <div className="cards">
 
           <div className="card">
@@ -39,23 +60,35 @@ const main = () => {
         </div>
       </div>
 
-      <div className="main-bottom">
+       <div className="main-bottom">
+
         <div className="search-box">
-          <input type="text" placeholder="Enter a prompt here" />
+          <input
+            type="text"
+            placeholder="Enter a prompt here"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
+
           <div>
             <img src={assets.gallery_icon} alt="" />
             <img src={assets.mic_icon} alt="" />
-            <img src={assets.send_icon} alt="" />
+            <img
+              src={assets.send_icon}
+              alt=""
+              onClick={handleSend}
+            />
           </div>
-          <p>
-            Gemini may dispatch inaccurate info, including about people,
-            so double-check its responses. Your Privacy and Gemini Apps
-          </p>
         </div>
+
+        <p className="bottom-info">
+          Gemini may display inaccurate info, so double-check responses.
+        </p>
+
       </div>
 
     </div>
   )
 }
 
-export default main
+export default Main;
