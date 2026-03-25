@@ -1,4 +1,5 @@
-import { useState } from "react";
+import ReactMarkdown from "react-markdown";
+import { useState, useRef } from "react";
 import { sendPrompt } from "../../config/gemini";
 import { assets } from "../../assets/assets";
 import './Main.css'
@@ -9,58 +10,111 @@ const Main = () => {
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSend = async () => {
-  if (!input) return;
+  const typingRef = useRef(null); // ✅ FIXED
 
-  setLoading(true);
-  const res = await sendPrompt(input);
-  setResponse(res);
-  setLoading(false);
-};
+  // ✅ Typing animation (SAFE)
+  const typeText = (text) => {
+    clearInterval(typingRef.current);
+
+    let i = 0;
+    setResponse("");
+
+    typingRef.current = setInterval(() => {
+      if (!text) return;
+
+      setResponse((prev) => prev + text.charAt(i));
+      i++;
+
+      if (i >= text.length) {
+        clearInterval(typingRef.current);
+      }
+    }, 15);
+  };
+
+  // ✅ FINAL HANDLE SEND (FULL SAFE)
+  const handleSend = async () => {
+    if (!input.trim() || loading) return;
+
+    try {
+      setLoading(true);
+
+      const res = await sendPrompt(input);
+
+      if (!res) {
+        setResponse("No response received");
+        return;
+      }
+
+      typeText(res);
+
+    } catch (error) {
+      console.log(error);
+      setResponse("Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+      setInput("");
+    }
+  };
 
   return (
     <div className='main h-screen'>
+
+      {/* NAV */}
       <div className="nav">
         <p>Gemini</p>
         <img src={assets.user_icon} alt="" />
       </div>
 
       <div className="main-container">
+
+        {/* GREET */}
         <div className="greet">
-          <p><span>Hello, Chikki.</span></p>
-          <p>How can i help you today</p>
+          <p><span>Hello, Nihal</span></p>
+          <p>How can I help you today</p>
         </div>
 
-        <div className="result">
-          {loading ? <p>Thinking...</p> : <p>{response}</p>}
-        </div>
-        
-        <div className="cards">
-
-          <div className="card">
-            <p>Suggest beautiful places to see an upcoming road trip</p>
-            <img src={assets.compass_icon} alt="" />
+        {/* RESULT */}
+        {loading ? (
+          <div className="result">
+            <p>Thinking...</p>
           </div>
-
-          <div className="card">
-            <p>Briefly summarize this concept: Urban planning</p>
-            <img src={assets.bulb_icon} alt="" />
+        ) : response ? (
+          <div className="result">
+            <ReactMarkdown>{response}</ReactMarkdown>
           </div>
+        ) : null}
 
-          <div className="card">
-            <p>Brainstrom team bonding activities for our work retreat</p>
-            <img src={assets.message_icon} alt="" />
+        {/* CARDS */}
+        {!response && !loading && (
+          <div className="cards">
+
+            <div className="card">
+              <p>Suggest beautiful places for a road trip</p>
+              <img src={assets.compass_icon} alt="" />
+            </div>
+
+            <div className="card">
+              <p>Briefly summarize: Urban planning</p>
+              <img src={assets.bulb_icon} alt="" />
+            </div>
+
+            <div className="card">
+              <p>Brainstorm team bonding activities</p>
+              <img src={assets.message_icon} alt="" />
+            </div>
+
+            <div className="card">
+              <p>Improve readability of code</p>
+              <img src={assets.compass_icon} alt="" />
+            </div>
+
           </div>
+        )}
 
-          <div className="card">
-            <p>Impove the readability of the following code </p>
-            <img src={assets.compass_icon} alt="" />
-          </div>
-
-        </div>
       </div>
 
-       <div className="main-bottom">
+      {/* BOTTOM */}
+      <div className="main-bottom">
 
         <div className="search-box">
           <input
@@ -68,6 +122,9 @@ const Main = () => {
             placeholder="Enter a prompt here"
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSend();
+            }}
           />
 
           <div>
@@ -76,7 +133,7 @@ const Main = () => {
             <img
               src={assets.send_icon}
               alt=""
-              onClick={handleSend}
+              onClick={!loading ? handleSend : null}
             />
           </div>
         </div>

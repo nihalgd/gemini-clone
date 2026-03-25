@@ -14,6 +14,6 @@ export const sendPrompt = async (prompt) => {
     return res.text;
   } catch (error) {
     console.log(error);
-    return "Error aagaya bhai";
+    return "DDaily limit reached. Please try again later";
   }
 };
